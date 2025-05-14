@@ -1,0 +1,7 @@
+cradle:
+  cabal:
+    - path: "./src"
+      component: "distributed-process-registry:lib:distributed-process-registry"
+
+    - path: "./test"
+      component: "distributed-process-registry:test:distributed-process-registry-test"
