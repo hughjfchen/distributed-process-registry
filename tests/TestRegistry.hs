@@ -6,6 +6,8 @@
 
 module Main where
 
+import Control.Distributed.Process.Registry
+import qualified Control.Distributed.Process.Registry as Registry
 import Control.Concurrent.MVar (newEmptyMVar, takeMVar)
 -- import Control.Concurrent.Utils (Exclusive (..), Lock, Sqynchronised (..))
 import Control.Concurrent.Utils (Lock(..))
@@ -18,31 +20,7 @@ import Control.Distributed.Process.Extras
 import Control.Distributed.Process.Extras.Time
 import Control.Distributed.Process.Extras.Timer (sleep)
 import Control.Distributed.Process.Node
-import Control.Distributed.Process.Registry
-  ( AwaitResult (..),
-    KeyUpdateEvent (..),
-    RegisterKeyReply (..),
-    Registry (..),
-    RegistryKeyMonitorNotification (..),
-    SearchHandle,
-    UnregisterKeyReply (..),
-    addName,
-    addProperty,
-    await,
-    awaitTimeout,
-    findByProperty,
-    findByPropertyValue,
-    foldNames,
-    giveAwayName,
-    lookupName,
-    lookupProperty,
-    queryNames,
-    registerName,
-    registerValue,
-    registeredNames,
-    unregisterName,
-  )
-import qualified Control.Distributed.Process.Registry as Registry
+
 import Control.Distributed.Process.Tests.Internal.Utils
 import Control.Monad (forM, forM_, void)
 import Control.Rematch
@@ -60,6 +38,7 @@ import Network.Transport.TCP
 import Test.Framework (Test, defaultMain, testGroup)
 import Test.Framework.Providers.HUnit (testCase)
 import Test.HUnit (Assertion, assertFailure)
+
 
 myRegistry :: Process (Registry String ())
 myRegistry = Registry.start
@@ -202,7 +181,7 @@ testProcessDeathHandling reg = do
     sendChan sp ()
     (expect :: Process ()) >>= return
   () <- receiveChan rp
-  void $ monitor pid
+  void $ Registry.monitor pid
   regNames <- registeredNames reg pid
   regNames `shouldContain` "proc.name.1"
   regNames `shouldContain` "proc.name.2"

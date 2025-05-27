@@ -4,3 +4,5 @@ cabal.sandbox.config
 .stack*
 dist-newstyle/
 result*
+*.~undo-tree~
+.direnv/
