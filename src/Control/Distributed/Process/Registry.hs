@@ -56,6 +56,7 @@
 -- in distributed-process' @Primitives@) and passing a list of filtering
 -- 'KeyUpdateEventMask'. Without these filters in place, a monitor event will
 -- be fired for /every/ pertinent change.
+
 module Control.Distributed.Process.Registry
   ( -- * Registry Keys
     KeyType (..),

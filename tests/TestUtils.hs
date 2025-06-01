@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable        #-}
 {-# LANGUAGE TemplateHaskell           #-}
+{-# LANGUAGE CPP #-}
 
 module TestUtils
   ( TestResult
@@ -145,8 +146,7 @@ newLogger = do
   _ <- forkIO $ logger q
   return $ Logger tid q
   where logger q' = forever $ do
-        msg <- atomically $ readTQueue q'
-        putStrLn msg
+                      putStrLn =<< atomically $ readTQueue q'
 
 -- | Send a message to the Logger
 putLogMsg :: Logger -> String -> Process ()

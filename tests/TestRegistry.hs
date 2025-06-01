@@ -4,7 +4,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Main where
+module TestRegistry where
 
 import Control.Distributed.Process.Registry
 import qualified Control.Distributed.Process.Registry as Registry
@@ -71,7 +71,7 @@ testAddRemoteProperty result = do
   reg <- counterReg
   p <- spawnLocal $ do
     pid <- expect
-    Just i <- lookupProperty reg "ducks" :: Process (Maybe Int)
+    Just i <- lookupProperty p reg "ducks" :: Process (Maybe Int)
     send pid i
   RegisteredOk <- registerValue reg p "ducks" (39 :: Int)
   getSelfPid >>= send p
@@ -109,7 +109,7 @@ testCheckLocalName reg = do
   void $ addName reg "fwibble"
   fwibble <- lookupName reg "fwibble"
   selfPid <- getSelfPid
-  fwibble `shouldBe` equalTo (Just selfPid)
+  fwibble `shouldEq` equalTo (Just selfPid)
 
 testGiveAwayName :: Registry String () -> Process ()
 testGiveAwayName reg = do
@@ -118,7 +118,7 @@ testGiveAwayName reg = do
   pid <- spawnLocal $ link testPid >> (expect :: Process ())
   giveAwayName reg "cat" pid
   cat <- lookupName reg "cat"
-  cat `shouldBe` equalTo (Just pid)
+  cat `shouldEq` equalTo (Just pid)
 
 testMultipleRegistrations :: Registry String () -> Process ()
 testMultipleRegistrations reg = do
@@ -126,7 +126,7 @@ testMultipleRegistrations reg = do
   forM_ names (addName reg)
   forM_ names $ \name -> do
     found <- lookupName reg name
-    found `shouldBe` equalTo (Just self)
+    found `shouldEq` equalTo (Just self)
   where
     names = ["foo", "bar", "baz"]
 

@@ -3,7 +3,8 @@
   inputs.haskellNix.url = "github:input-output-hk/haskell.nix";
   inputs.nixpkgs.follows = "haskellNix/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  outputs = { self, nixpkgs, flake-utils, haskellNix }:
+  inputs.static-ls.url = "github:josephsumabat/static-ls";
+  outputs = { self, nixpkgs, flake-utils, static-ls, haskellNix }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         overlays = [
@@ -19,11 +20,16 @@
                 shell.tools = {
                   cabal = { };
                   hlint = { };
+                  #haskellPackages.hiedb-plugin = { };
+                  #static-ls.outputs.packages.${system}.static-ls = { };
                   haskell-language-server = { };
                 };
                 # Non-Haskell shell tools go here
-                shell.buildInputs = with pkgs; [
-                  nixpkgs-fmt
+                shell.buildInputs = [
+                  pkgs.nixpkgs-fmt
+                  pkgs.ghciwatch
+                  #pkgs.haskellPackages.hiedb
+                  #static-ls.outputs.packages.${system}.static-ls
                 ];
                 # This adds `js-unknown-ghcjs-cabal` to the shell.
                 # shell.crossPlatforms = p: [p.ghcjs];
